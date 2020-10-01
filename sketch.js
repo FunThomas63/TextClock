@@ -20,11 +20,6 @@ function setup() {
 	frameRate(1);
 	
 	setMode(defaultMode);
-	
-	if (mode != modeNormal) 
-		t = new Date(2000, 1, 1, 13, 0);
-	if (mode == modeAutoTest || mode == modeManualTest)
-		timeDiplayer.minuteSwitchIntervall = 0;
 }
 
 function draw() {
@@ -44,9 +39,6 @@ function draw() {
 		t.setTime(t.getTime() + delta); 
 	}
 
-	if (mode == modeEffectTest || mode == modeManualTest)
-		noLoop();
-	
 	// Hint to toggle
 	textAlign(CENTER, TOP);
 	textSize(9);
@@ -72,9 +64,18 @@ function setMode(_mode)
 	if (mode == modeManualTest) {
 		hint = "press any key to switch to clock mode." + char(10) + "Click to display next time.";
 		t = new Date(2000, 1, 1, 13, 0);
+		// Don't set m
 	}
     else if (mode == modeNormal) {	
 		hint = "press any key to switch to debug mode";
+		loop();
     }
+	
+	if (mode == modeEffectTest || mode == modeManualTest)
+		noLoop();
+	
+	if (mode == modeAutoTest || mode == modeManualTest)
+		timeDiplayer.minuteSwitchIntervall = 0;
+	
 	draw();
 }
