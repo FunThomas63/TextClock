@@ -3,6 +3,7 @@ function MinuteSwitcher(sizeX, sizeY)
 	this.steps = 8;  // <steps> steps from grey to MaxColor (and back to grey)
 	this.delta = 5;	 // next diagonal "follows" after <delta> ticks
 	this.brightnessFactor = 100 / this.steps;
+	this.isMinuteSwitchTest = false;
 	
 	this.diagonalCount = sizeX + sizeY - 1;
 	if (!this.isTest)
@@ -12,7 +13,7 @@ function MinuteSwitcher(sizeX, sizeY)
 	this.activate = function()
 	{
 		this.ticks = 0;
-		if (!isMinuteSwitchTest)
+		if (!this.isMinuteSwitchTest)
 			frameRate(this.duration);		// Let it run in 1 second
 	}
 	
@@ -29,7 +30,7 @@ function MinuteSwitcher(sizeX, sizeY)
 		if (this.ticks > this.duration)
 		{
 			this.ticks = -1;
-			if (!isMinuteSwitchTest)
+			if (!this.isMinuteSwitchTest)
 			{
 				frameRate(1);		// No need to hurry when it's over
 				draw();

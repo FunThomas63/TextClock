@@ -13,6 +13,7 @@ var hint = "";
 var settings;
 
 function setup() {
+	noLoop();
 	settings = new Settings();
 	createCanvas(600, 600);	
 	
@@ -25,6 +26,7 @@ function setup() {
 function draw() {
 	if (mode == modeNormal)
 		t = new Date();
+	
 	timeDiplayer.displayTime(t);
 	
 	if (mode == modeAutoTest) {
@@ -61,21 +63,35 @@ function setMode(_mode)
 {
 	mode = _mode
 	
-	if (mode == modeManualTest) {
-		hint = "press any key to switch to clock mode." + char(10) + "Click to display next time.";
-		t = new Date(2000, 1, 1, 13, 0);
-		// Don't set m
+	switch (mode) {
+
+		case modeNormal:
+			hint = "press any key to switch to debug mode";
+			settings.minuteSwitchIntervall = 1;
+			loop();
+			break;
+
+		case modeManualTest:
+			hint = "press any key to switch to clock mode." + char(10) + "Click to display next time.";
+			t = new Date(2000, 1, 1, 12, 0);
+			noLoop();
+			settings.minuteSwitchIntervall = 0;
+			break;
+
+		case modeAutoTest:
+			hint = ""
+			t = new Date(2000, 1, 1, 12, 0);
+			loop();
+			settings.minuteSwitchIntervall = 0;
+			break;
+
+		case modeEffectTest:
+			hint = ""
+			noLoop();
+			settings.minuteSwitchIntervall = 1;
+			timeDiplayer.minuteSwitcher.isMinuteSwitchTest = true;
+			break;
 	}
-    else if (mode == modeNormal) {	
-		hint = "press any key to switch to debug mode";
-		loop();
-    }
-	
-	if (mode == modeEffectTest || mode == modeManualTest)
-		noLoop();
-	
-	if (mode == modeAutoTest || mode == modeManualTest)
-		timeDiplayer.minuteSwitchIntervall = 0;
-	
+
 	draw();
 }

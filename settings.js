@@ -26,7 +26,7 @@ class Settings
 		this.digitalTextColor = -1;
 		this.digitalTextSize = 0.4;
 		
-		this.useMinuteChanger = true;
+		this.minuteSwitchIntervall = 1;
 	}
 	
 	fillNormalTextColorArray(defColor) {

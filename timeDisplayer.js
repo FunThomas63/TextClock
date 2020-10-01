@@ -10,7 +10,6 @@ function TimeDisplayer(_languageTimeObj)
 	this.boxH = (height - (2 * this.borderTop)) / this.languageTimeObj.matrix.length;
 
 	this.minuteSwitcher = new MinuteSwitcher(s.length, this.languageTimeObj.matrix.length);		// ToDo: umbenennen in effect
-	this.minuteSwitchIntervall = 1;	// All 1 minutes 
 
 	this.displayTime = function(_t)
 	{
@@ -21,7 +20,7 @@ function TimeDisplayer(_languageTimeObj)
 		var second = t.getSeconds();
 		var wordArr = this.languageTimeObj.getWordsForTime(hour, minute);
 		
-		if (settings.minuteSwitchIntervall > 0 && second == 0 && minute % this.minuteSwitcher.minuteSwitchIntervall() == 0)
+		if (settings.minuteSwitchIntervall > 0 && second == 0 && minute % settings.minuteSwitchIntervall == 0)
 			this.minuteSwitcher.activate();
 		
 		this.drawTime(wordArr, hour, minute, second);
