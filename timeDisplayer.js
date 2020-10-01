@@ -3,6 +3,7 @@ function TimeDisplayer(_languageTimeObj)
 	this.languageTimeObj  = _languageTimeObj;
 	this.borderTop = height / 10;
 	this.borderLeft = width / 10;
+	this.useUpper = true;
 
 	var s = this.languageTimeObj.matrix[0];
 	// Size of a Character-Rect
@@ -49,6 +50,7 @@ function TimeDisplayer(_languageTimeObj)
 			{
 				var x = Math.floor(this.borderLeft + (j + 0.5) * this.boxW);
 				var chr = this.languageTimeObj.matrix[i].substr(j, 1);
+				if (this.useUpper) chr = chr.toUpperCase();
 	
 				if (settings.useShadow)
 				{
@@ -75,6 +77,7 @@ function TimeDisplayer(_languageTimeObj)
 				for (j=0; j<word.l; j++)
 				{
 					var chr = this.languageTimeObj.matrix[word.r].substr(word.c+j, 1);
+					if (this.useUpper) chr = chr.toUpperCase();
 					var x = Math.floor(this.borderLeft + (word.c + j + 0.5) * this.boxW);
 					var y = Math.floor(this.borderTop + (word.r + 0.5) * this.boxH);
 					if (settings.useShadow)
