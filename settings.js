@@ -9,7 +9,8 @@ class Settings
 		this.fillNormalTextColorArray(color(0, 160, 220));
 		this.useRandomTextColor = true;
 		this.textSize = 0.85;
-		
+		this.useUpper = true;
+			
 		this.useShadow = true;
 		this.shadowColorNormalText = color(220);
 		this.shadowColorDimmedText = color(200);
