@@ -81,6 +81,11 @@ function windowResized() {
 	}
 }
 
+
+function keyPressed() {
+	toggleMode();
+}
+
 function mousePressed() {
 	mousePressedEventStart = new Date();
 }
@@ -90,9 +95,16 @@ function mouseReleased() {
 		toggleMode();
 }
 
-function keyPressed() {
-	toggleMode();
+function touchStarted() {
+	mousePressedEventStart = new Date();
 }
+
+function touchEnded() {
+	if (new Date() - mousePressedEventStart > 1000) 
+		toggleMode();
+}
+
+
 
 function toggleMode() {
 	if (mode == modeManualTest)
