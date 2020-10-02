@@ -6,13 +6,14 @@ const defaultMode = modeManualTest;
 const millisecondsPerMinute = 60000;
 const defaultSize = 600;
 
-
 var timeDiplayer;
 var t;
 var mousePressedEventStart;
 var mode = defaultMode;
 var hint = "";
 var isFullScreen = false;
+
+var eventLog = [];
 
 var settings;
 
@@ -50,9 +51,14 @@ function draw() {
 	textSize(9);
 	fill(0);
 	text(hint, width/2, 2);
+	
+	showEvents();
 }
 
 function mouseClicked() {
+	eventLog.push("Mouse Clicked");
+	showEvents();
+	
 	// Doubleclick seems not to come thru when using touch device,
 	// so we implement it manually.
 	if (new Date() - mousePressedEventStart < 200) 
@@ -65,11 +71,11 @@ function toggleFullscreen() {
 	isFullScreen = !isFullScreen;
 
 	if (isFullScreen) {
-		fullscreen(true);
+		if (!fullscreen()) fullscreen(true);
 		resizeCanvas(windowWidth, windowHeight);
 	}
 	else {
-		fullscreen(false);
+		if (fullscreen()) fullscreen(false);
 		resizeCanvas(defaultSize, defaultSize);
 	}
 		
@@ -86,27 +92,44 @@ function windowResized() {
 }
 
 function keyPressed() {
+eventLog.push("Key Pressed");
+showEvents();
+
 	toggleMode();
 }
 
 function mousePressed() {
+eventLog.push("Mouse Pressed");
+showEvents();
 	mousePressedEventStart = new Date();
 }
 
 function mouseReleased() {
+eventLog.push("Mouse Released");
+showEvents();
 	if (new Date() - mousePressedEventStart > 1000) 
 		toggleMode();
 }
 
 function touchStarted() {
+eventLog.push("Touch started");
+showEvents();
 	mousePressedEventStart = new Date();
 }
 
 function touchEnded() {
+eventLog.push("Touch ended");
+showEvents();
 	if (new Date() - mousePressedEventStart > 1000) 
 		toggleMode();
 }
 
+function showEvents() {
+	textSize(9);
+	textAlign(LEFT, TOP);
+	for (let i=0; i<eventLog.length; i++)
+		text(eventLog[i], 4, 10+i*10);
+}
 
 
 function toggleMode() {
