@@ -8,7 +8,8 @@ const defaultSize = 600;
 
 var timeDiplayer;
 var t;
-var mousePressedEventStart;
+var mousePressedEventStart;				// Remember the time when mouse was pressed (to check if it was hold for 1s)
+var mouseReleasedEvent;					// Remember when the mouse was released (to check for doubleClick)
 var mode = defaultMode;
 var hint = "";
 var isFullScreen = false;
@@ -28,6 +29,7 @@ function setup() {
 	setMode(defaultMode);
 }
 
+// --------------------------------------------------------------------
 function draw() {
 	if (mode == modeNormal)
 		t = new Date();
@@ -55,16 +57,34 @@ function draw() {
 	showEvents();
 }
 
+// --------------------------------------------------------------------
+
+function mousePressed() {
+eventLog.push("Mouse Pressed");
+showEvents();
+    
+	mousePressedEventStart = new Date();
+}
+
+function mouseReleased() {
+eventLog.push("Mouse Released");
+showEvents();
+    
+	let now = new Date();
+	
+    if (now - mouseReleasedEvent < 200)
+		toggleFullscreen();
+	else if (new Date() - mousePressedEventStart > 1000) 
+		toggleMode();
+
+	mouseReleasedEvent = now;	
+}
+
 function mouseClicked() {
 	eventLog.push("Mouse Clicked");
 	showEvents();
 	
-	// Doubleclick seems not to come thru when using touch device,
-	// so we implement it manually.
-	if (new Date() - mousePressedEventStart < 200) 
-		toggleFullscreen();
-	else
-		if (mode == modeEffectTest || mode == modeManualTest) draw();
+	if (mode == modeEffectTest || mode == modeManualTest) draw();
 }
 
 function toggleFullscreen() {
@@ -98,19 +118,9 @@ showEvents();
 	toggleMode();
 }
 
-function mousePressed() {
-eventLog.push("Mouse Pressed");
-showEvents();
-	mousePressedEventStart = new Date();
-}
 
-function mouseReleased() {
-eventLog.push("Mouse Released");
-showEvents();
-	if (new Date() - mousePressedEventStart > 1000) 
-		toggleMode();
-}
 
+/*
 function touchStarted() {
 eventLog.push("Touch started");
 showEvents();
@@ -123,6 +133,7 @@ showEvents();
 	if (new Date() - mousePressedEventStart > 1000) 
 		toggleMode();
 }
+*/
 
 function showEvents() {
 	textSize(9);
@@ -132,7 +143,9 @@ function showEvents() {
 }
 
 
+
 function toggleMode() {
+	// Toggle between Debug and Normal mode 
 	if (mode == modeManualTest)
 		setMode(modeNormal)
     else if (mode == modeNormal)
