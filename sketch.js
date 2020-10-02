@@ -4,18 +4,22 @@ const modeManualTest = "ManualTest"		// Test all hours (1-12) and then all 5 min
 const modeEffectTest = "EffectTest"		// Test minute switcher test.
 const defaultMode = modeManualTest;
 const millisecondsPerMinute = 60000;
+const defaultSize = 600;
+
 
 var timeDiplayer;
 var t;
+var mousePressedEventStart;
 var mode = defaultMode;
 var hint = "";
+var isFullScreen = false;
 
 var settings;
 
 function setup() {
 	noLoop();
 	settings = new Settings();
-	createCanvas(600, 600);	
+	createCanvas(defaultSize, defaultSize);	
 	
 	timeDiplayer = new TimeDisplayer(new LanguageTimeObjPlatt);
 	frameRate(1);
@@ -52,7 +56,45 @@ function mouseClicked() {
 	if (mode == modeEffectTest || mode == modeManualTest) draw();
 }
 
+
+function doubleClicked() {
+	isFullScreen = !isFullScreen;
+
+	if (isFullScreen) {
+		fullscreen(true);
+		resizeCanvas(windowWidth, windowHeight);
+	}
+	else {
+		fullscreen(false);
+		resizeCanvas(defaultSize, defaultSize);
+	}
+		
+	timeDiplayer.setSize();
+	draw();
+}
+
+function windowResized() {
+	if (isFullScreen) {
+		resizeCanvas(windowWidth, windowHeight);
+		timeDiplayer.setSize();
+		draw();
+	}
+}
+
+function mousePressed() {
+	mousePressedEventStart = new Date();
+}
+
+function mouseReleased() {
+	if (new Date() - mousePressedEventStart > 1000) 
+		toggleMode();
+}
+
 function keyPressed() {
+	toggleMode();
+}
+
+function toggleMode() {
 	if (mode == modeManualTest)
 		setMode(modeNormal)
     else if (mode == modeNormal)
@@ -66,13 +108,13 @@ function setMode(_mode)
 	switch (mode) {
 
 		case modeNormal:
-			hint = "press any key to switch to debug mode";
+			hint = "press any key or hold mouse for 1 second to switch to debug mode";
 			settings.minuteSwitchIntervall = 1;
 			loop();
 			break;
 
 		case modeManualTest:
-			hint = "press any key to switch to clock mode." + char(10) + "Click to display next time.";
+			hint = "press any key or hold mouse for 1 second to switch to clock mode." + char(10) + "Click to display next time.";
 			t = new Date(2000, 1, 1, 12, 0);
 			noLoop();
 			settings.minuteSwitchIntervall = 0;
@@ -93,5 +135,6 @@ function setMode(_mode)
 			break;
 	}
 
+	hint = hint + (hint.length > 0 ? char(10) : "") + "Double click to toggle full screen mode."
 	draw();
 }

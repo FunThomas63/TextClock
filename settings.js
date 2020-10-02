@@ -3,7 +3,9 @@ class Settings
 	constructor() {
 		this.font = "Verdana";
 
-		this.backColor = color(230);
+		this.backColor = color(240);
+		this.clockColor = color(220);
+		
 		this.dimmedTextColor = color(225);
 		this.normalTextColor = [];
 		this.fillNormalTextColorArray(color(0, 160, 220));

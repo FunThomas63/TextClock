@@ -1,17 +1,22 @@
-function TimeDisplayer(_languageTimeObj)
-{
-	this.languageTimeObj  = _languageTimeObj;
-	this.borderTop = height / 10;
-	this.borderLeft = width / 10;
+class TimeDisplayer {
+    constructor(_languageTimeObj) {
+		this.languageTimeObj  = _languageTimeObj;
+		var s = this.languageTimeObj.matrix[0];
+		this.minuteSwitcher = new MinuteSwitcher(s.length, this.languageTimeObj.matrix.length);		// ToDo: umbenennen in effect
+		this.setSize();
+	}
+	
+	setSize() {
+		this.clockSize = Math.min(width, height);
+		this.borderTop = this.clockSize / 10;
+		this.borderLeft = this.clockSize / 10;	
 
-	var s = this.languageTimeObj.matrix[0];
-	// Size of a Character-Rect
-	this.boxW = (width - (2 * this.borderLeft)) / s.length;
-	this.boxH = (height - (2 * this.borderTop)) / this.languageTimeObj.matrix.length;
+		// Size of a Character-Rect
+		this.boxW = (this.clockSize - (2 * this.borderLeft)) / this.languageTimeObj.matrix[0].length;
+		this.boxH = (this.clockSize - (2 * this.borderTop)) / this.languageTimeObj.matrix.length;
+	}
 
-	this.minuteSwitcher = new MinuteSwitcher(s.length, this.languageTimeObj.matrix.length);		// ToDo: umbenennen in effect
-
-	this.displayTime = function(_t)
+	displayTime(_t)
 	{
 		this.t = _t;
 		if (_t == undefined) t = new Date();
@@ -27,27 +32,32 @@ function TimeDisplayer(_languageTimeObj)
 		this.minuteSwitcher.progress();
 	}
 	
-	this.drawTime = function(wordArr, hour, minute, second)
+	drawTime(wordArr, hour, minute, second)
 	{
 		fill(settings.backColor);
 		rect(0, 0, width, height);
 		
+		push();
+		translate((width - this.clockSize) / 2, (height - this.clockSize) / 2);
+		fill(settings.clockColor);
+		rect(0, 0, this.clockSize, this.clockSize);
+		
 		let textColor = settings.textColor;
 		
-		var ts = Math.floor(Math.min(this.boxW, this.boxH) * settings.textSize);
+		let ts = Math.floor(Math.min(this.boxW, this.boxH) * settings.textSize);
 		// console.log(ts);
 		textSize(ts);
 		textFont(settings.font);
 		textAlign(CENTER, CENTER);
 		
 		// Draw all characters, but very dimmed
-		for (var i=0; i < this.languageTimeObj.matrix.length; i++)
+		for (let i=0; i < this.languageTimeObj.matrix.length; i++)
 		{
-			var y = Math.floor(this.borderTop + (i + 0.5) * this.boxH);
-			for (j=0; j < this.languageTimeObj.matrix[i].length; j++)
+			let y = Math.floor(this.borderTop + (i + 0.5) * this.boxH);
+			for (let j=0; j < this.languageTimeObj.matrix[i].length; j++)
 			{
-				var x = Math.floor(this.borderLeft + (j + 0.5) * this.boxW);
-				var chr = this.languageTimeObj.matrix[i].substr(j, 1);
+				let x = Math.floor(this.borderLeft + (j + 0.5) * this.boxW);
+				let chr = this.languageTimeObj.matrix[i].substr(j, 1);
 				if (settings.useUpper) chr = chr.toUpperCase();
 	
 				if (settings.useShadow)
@@ -69,15 +79,15 @@ function TimeDisplayer(_languageTimeObj)
 		{
 			// Draw the words 
 			fill(settings.normalTextColor);
-			for (var i=0; i<wordArr.length; i++)
+			for (let i=0; i<wordArr.length; i++)
 			{
-				var word = wordArr[i];
-				for (j=0; j<word.l; j++)
+				let word = wordArr[i];
+				for (let j=0; j<word.l; j++)
 				{
-					var chr = this.languageTimeObj.matrix[word.r].substr(word.c+j, 1);
+					let chr = this.languageTimeObj.matrix[word.r].substr(word.c+j, 1);
 					if (settings.useUpper) chr = chr.toUpperCase();
-					var x = Math.floor(this.borderLeft + (word.c + j + 0.5) * this.boxW);
-					var y = Math.floor(this.borderTop + (word.r + 0.5) * this.boxH);
+					let x = Math.floor(this.borderLeft + (word.c + j + 0.5) * this.boxW);
+					let y = Math.floor(this.borderTop + (word.r + 0.5) * this.boxH);
 					if (settings.useShadow)
 					{
 						fill(settings.shadowColorNormalText);
@@ -96,8 +106,8 @@ function TimeDisplayer(_languageTimeObj)
 			let minuteCircles = (minute % 5);
 
 			for (let m=1; m<=4; m++) {
-				let x = (m % 2 == 1 ? settings.minuteCirclePos : width - settings.minuteCirclePos);
-				let y = (m < 3 ? settings.minuteCirclePos : height - settings.minuteCirclePos);
+				let x = (m % 2 == 1 ? settings.minuteCirclePos : this.clockSize - settings.minuteCirclePos);
+				let y = (m < 3 ? settings.minuteCirclePos : this.clockSize - settings.minuteCirclePos);
 				
 				if (settings.useShadow) {
 					fill(minuteCircles >= m ? settings.shadowColorNormalText : settings.shadowColorDimmedText);
@@ -110,8 +120,8 @@ function TimeDisplayer(_languageTimeObj)
 		
 		if (settings.showDigital) {			
 			// Display time in form HH:MM
-			let x = width/2;
-			let y = settings.digitalPosTop ? settings.digitalPos : height - settings.digitalPos;
+			let x = this.clockSize/2;
+			let y = settings.digitalPosTop ? settings.digitalPos : this.clockSize - settings.digitalPos;
 			let tStr = (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute + ":" + (second < 10 ? "0" : "") + second;
 			
 			textSize(Math.floor(Math.min(this.boxW, this.boxH) * settings.digitalTextSize));
@@ -122,5 +132,6 @@ function TimeDisplayer(_languageTimeObj)
 			fill(settings.digitalTextColor >= 0 ? settings.digitalTextColor : settings.getNormalTextColor(minute));
 			text(tStr, x, y);
 		}
+		pop();
 	}
 }
