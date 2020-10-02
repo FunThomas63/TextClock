@@ -53,11 +53,15 @@ function draw() {
 }
 
 function mouseClicked() {
-	if (mode == modeEffectTest || mode == modeManualTest) draw();
+	// Doubleclick seems not to come thru when using touch device,
+	// so we implement it manually.
+	if (new Date() - mousePressedEventStart < 200) 
+		toggleFullscreen();
+	else
+		if (mode == modeEffectTest || mode == modeManualTest) draw();
 }
 
-
-function doubleClicked() {
+function toggleFullscreen() {
 	isFullScreen = !isFullScreen;
 
 	if (isFullScreen) {
@@ -80,7 +84,6 @@ function windowResized() {
 		draw();
 	}
 }
-
 
 function keyPressed() {
 	toggleMode();
